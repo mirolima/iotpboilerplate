@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>iotcloud.bluemix.boilerplate.v3</name>
+	<comment></comment>
+	<projects>
+		<project>iotcloud.build</project>
+		<project>iotcloud.build.ant.tasks</project>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+</projectDescription>

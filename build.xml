@@ -1,0 +1,159 @@
+<project name="iotcloud.bluemix.boilerplate.v3" default="push" basedir=".">
+	<dirname property="workspace.dir" file="${ant.file}/.." />
+	<tstamp>
+		<format property="build.timestamp" pattern="yyyyMMdd-HHmm-SSS" />
+	</tstamp>	
+	<import file="${workspace.dir}/iotcloud.build/imports/imports.xml" />
+	
+	<property name="bluemix.uri" value="stage1.ng.bluemix.net"/>
+	<property name="bluemix.username" value=""/>
+	
+	<property name="project.name" value="iotcloud.bluemix.boilerplate.v3"/>
+	<property name="project.dir" value="${workspace.dir}/${project.name}"/>
+	<property name="public.dir" value="${project.dir}/public"/>
+	<property name="git.dir" value="${public.dir}/git"/>
+	<property name="git.dir.tmp" value="${public.dir}/.git"/>
+	
+	<!--property name="runtime.name" value="${runtime.name}"/-->
+	<property name="ace.prefix" value="console"/>
+	<!--property name="metadata.url" value="https://${runtime.name}.${bluemix.uri}/metadata.json"/-->
+	
+	<property name="output.dir" value="${project.dir}/output"/>
+	<property name="manifest.file.input" value="${project.dir}/manifest.yml.template"/>
+	<property name="manifest.file.output" value="${output.dir}/manifest.yml"/>
+
+	<target name="clean">
+		<delete dir="${git.dir}" />
+		<delete dir="${git.dir.tmp}" />
+		<delete dir="${output.dir}" />
+	</target>
+	
+	<target name="init" depends="clean">
+		<mkdir dir="${output.dir}"/>
+		
+		<echo message="Updating metadata files"/>			
+		<copy file="${manifest.file.input}" tofile="${manifest.file.output}"/>
+		<replace dir="${output.dir}" includes="manifest.yml">
+			<replacefilter token="@bluemix.uri@" value="${bluemix.uri}"/>
+			<!--replacefilter token="@runtime.name@" value="${runtime.name}"/-->
+		</replace>
+	</target>
+			
+	<target name="git" depends="init">
+		<exec 
+			executable="git"
+			dir="${public.dir}"
+			failonerror="true"
+		>
+		 		<arg value="init" />
+		</exec>
+		
+		<exec 
+			executable="git"
+			dir="${public.dir}"
+			failonerror="true"
+		>
+		 		<arg value="add" />
+				<arg value="-A" />
+		</exec>		
+		
+		<exec 
+			executable="git"
+			dir="${public.dir}"
+			failonerror="true"
+		>
+		 		<arg value="commit" />
+				<arg value="-m" />
+				<arg value="'Initial Commit'" />
+		</exec>	
+			
+		<exec 
+			executable="git"
+			dir="${public.dir}"
+			failonerror="true"
+		>
+		 		<arg value="update-server-info" />
+		</exec>	
+		
+		<move todir="${git.dir}">
+			<fileset dir="${git.dir.tmp}"/>
+		</move>
+	</target>
+	
+	
+	<property name="bluemix.password.file" value="${user.home}/.bluemix.password"/>
+	
+	<target name="login">
+		<echo message="Bluemix URI: ${bluemix.uri}"/>
+		<echo message="Bluemix Username: ${bluemix.username}"/>
+		<loadfile property="bluemix.password" srcFile="${bluemix.password.file}"/>
+		
+		<echo message="Logging into cf"/>
+		<exec 
+			executable="/usr/local/bin/cf"
+			failonerror="true"
+		>
+			<arg value="api" />
+			<arg value="https://api.${bluemix.uri}" />
+		</exec>
+
+		<exec 
+			executable="/usr/local/bin/cf"
+			failonerror="true"
+		>
+			<arg value="login" />
+			<arg value="-u" />
+			<arg value="${bluemix.username}" />
+			<arg value="-p" />
+			<arg value="${bluemix.password}" />
+		</exec>
+
+		<exec 
+			executable="/usr/local/bin/cf"
+			failonerror="true"
+		>
+			<arg value="target" />
+			<arg value="-o" />
+			<arg value="internet_of_things" />
+			<arg value="-s" />
+			<arg value="production" />
+		</exec>	
+		
+	</target>
+
+
+	
+	<target name="push" depends="git, login">
+		<exec 
+			executable="/usr/local/bin/cf"
+			dir="${project.dir}"
+			failonerror="true"
+		>
+		 		<arg value="push" />
+				<arg value="-f" />
+				<arg value="${manifest.file.output}" />			
+		</exec>
+	</target>
+	
+	<!--
+	NOTE: Previously, a call to cloud-cli update-template was required.
+	This step is no longer required required to update the boilerplate. The cf push to update the NodeJS hosting app is now sufficient.
+	-->
+	
+	<!-- 
+	register-template can no longer be done by IoTF Ops.  For register-template operations contact CloudOE-admin@webconf.ibm.com
+	<target name="register-template" depends="push, login">
+		<exec 
+			executable="cloud-cli"
+			failonerror="true"
+		>
+				<arg value="register-template"/>
+		 		<arg value="-url" />		
+				<arg value="${metadata.url}"/>
+				<arg value="${runtime.name}"/>
+		</exec>
+	</target>
+	-->
+	
+
+</project>

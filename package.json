@@ -1,0 +1,6 @@
+{
+    "name": "iot-template",
+    "dependencies": {
+        "connect": "2.14.1"
+    }
+}

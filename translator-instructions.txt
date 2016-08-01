@@ -1,0 +1,22 @@
+Instructions for translating the file metadata.json
+===================================================
+
+This file contains translations for all languages together in the one file. The translations are near the end of the
+file in the section beginning:
+
+	"extra": {
+		"i18n": {
+
+Locate the elements for your language. For example, German is at:
+
+	"extra": {
+		"i18n": {
+			"de": {
+
+Translate ONLY the elements for your language. Do not translate elements elsewhere in the file.
+
+Translate only the text enclosed in matching double quotes (") following a colon (:).
+
+Do not translate the phrase: Internet of Things Foundation
+
+The file is encoded in ISO-8859-1. Use escaped Unicode (\udddd) to represent characters that cannot be expressed in ISO-8859-1.
