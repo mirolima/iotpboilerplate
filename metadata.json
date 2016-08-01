@@ -28,7 +28,7 @@
 	},
 	"source": {
 		"scmType": "git",
-		"url": "git",
+		"url": "https://github.com/mirolima/iotpboilerplate.git",
 		"appPath": "app"
 	},
 	"runtime_id": "763dcb4a-8642-4676-ae17-ca5bd032ad9e",
