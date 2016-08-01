@@ -1,6 +1,0 @@
----
-applications:
-- name: iot-template
-  memory: 128M
-  command: node app.js
-  domain: ng.bluemix.net
